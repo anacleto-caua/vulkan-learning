@@ -1,0 +1,3 @@
+﻿  main.cpp
+C:\!projects\cpp\VulkanLearning\main.cpp(102,27): warning C4018: '<': signed/unsigned mismatch
+  VulkanLearning.vcxproj -> C:\!projects\cpp\VulkanLearning\x64\Debug\VulkanLearning.exe
