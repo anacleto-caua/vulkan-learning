@@ -3,6 +3,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(learning LANGUAGES CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #Should make my project compatible to windows
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -16,13 +18,19 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     vulkan
-    dl
-    pthread
-    X11
-    Xxf86vm
-    Xrandr
-    Xi
 )
+
+# Link Linux-specific libraries
+if (UNIX) # True on Linux and macOS, false on Windows
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        dl
+        pthread
+        X11
+        Xxf86vm
+        Xrandr
+        Xi
+    )
+endif()
 
 # Set output directories for built artifacts
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
