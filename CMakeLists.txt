@@ -3,7 +3,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(learning LANGUAGES CXX)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #Should make my project compatible to windows
+# This makes IDEs/tools capable of correcting my code
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
