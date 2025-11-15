@@ -142,7 +142,7 @@ private:
             bool extensionFound = false;
             
             for (const auto& extension : extensions) {
-                if (strcmp(extension.extensionName, glfwExtensions[i])) {
+                if (strcmp(extension.extensionName, glfwExtensions[i]) == 0) {
                     extensionFound = true;
                     break;
                 }
