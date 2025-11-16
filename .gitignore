@@ -1,5 +1,7 @@
 .cache
 build/*
+.vscode/
+.clang-format
 
 # CMake .gitignore from github
 # I'm building everything inside build/ but it's good to have a fallback in case I use the wrong CMake command
