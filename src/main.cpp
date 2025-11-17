@@ -48,9 +48,9 @@ class HelloTriangleApplication {
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device; // The logical device that will interface with the physical device
 
-    // They are being handleded as two separate queues but may end up being the
+    // They are being handled as two separate queues but may end up being the
     // same(depends on device) Using the same queue for both may improve
-    // performance(not explicitlly implemented)
+    // performance(not explicitly implemented)
     VkQueue graphicsQueue;
     VkQueue presentQueue;
 
@@ -61,7 +61,7 @@ class HelloTriangleApplication {
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
 
-    // The struct gotta be modified so that we can
+    // The struct got to be modified so that we can
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily;
         std::optional<uint32_t> presentFamily;
@@ -398,14 +398,14 @@ class HelloTriangleApplication {
             throw std::runtime_error("failed to find a suitable GPU!");
         }
 
-        // Choosen device
+        // Chosen device
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(
             physicalDevice,
             &deviceProperties); // Looking for device data a second
         // time, just doesn't look good
 
-        std::cout << "Choosen Device Properties: " << std::endl;
+        std::cout << "Chosen Device Properties: " << std::endl;
         std::cout << "Device ID: " << deviceProperties.deviceID << std::endl;
         std::cout << "Device Type: " << deviceProperties.deviceType
                   << std::endl;
@@ -474,7 +474,7 @@ class HelloTriangleApplication {
 
         // Application can't function without geometry shaders
         // Should this be on isDeviceSuitable? Maybe
-        // Is there even a point on having thoose 2 functions?
+        // Is there even a point on having those 2 functions?
         if (!deviceFeatures.geometryShader) {
             return 0;
         }
