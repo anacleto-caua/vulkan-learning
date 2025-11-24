@@ -1,1 +1,1 @@
-https://vulkan-tutorial.com/en/Drawing_a_triangle/Swap_chain_recreation
+https://vulkan-tutorial.com/en/Vertex_buffers/Vertex_input_description
