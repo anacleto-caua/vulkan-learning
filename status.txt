@@ -1,1 +1,1 @@
-https://vulkan-tutorial.com/en/Drawing_a_triangle/Drawing/Frames_in_flight
+https://vulkan-tutorial.com/en/Drawing_a_triangle/Swap_chain_recreation
