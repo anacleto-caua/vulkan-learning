@@ -1254,15 +1254,6 @@ class HelloTriangleApplication {
 
     }
 
-    void mainLoop() {
-        while (!glfwWindowShouldClose(window)) {
-            glfwPollEvents();
-            drawFrame();
-        }
-
-        vkDeviceWaitIdle(device);
-    }
-
 
     void createSyncObjects() {
 
@@ -1495,6 +1486,17 @@ class HelloTriangleApplication {
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
     }
+
+
+    void mainLoop() {
+        while (!glfwWindowShouldClose(window)) {
+            glfwPollEvents();
+            drawFrame();
+        }
+
+        vkDeviceWaitIdle(device);
+    }
+
 };
 
 int main() {
