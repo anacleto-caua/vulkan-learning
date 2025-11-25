@@ -1145,7 +1145,7 @@ class HelloTriangleApplication {
         poolInfoTransfer.queueFamilyIndex = queueFamilyIndices.transferFamily.value();
 
         if (vkCreateCommandPool(device, &poolInfoTransfer, nullptr, &commandPoolTransfer) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create tranfer command pool!");
+            throw std::runtime_error("failed to create transfer command pool!");
         }
     }
 
