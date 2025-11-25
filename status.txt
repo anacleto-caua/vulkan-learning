@@ -1,1 +1,1 @@
-https://vulkan-tutorial.com/en/Vertex_buffers/Vertex_buffer_creation
+https://vulkan-tutorial.com/en/Vertex_buffers/Staging_buffer
