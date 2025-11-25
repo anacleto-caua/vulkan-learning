@@ -111,6 +111,7 @@ class HelloTriangleApplication {
     // performance(not explicitly implemented)
     VkQueue graphicsQueue;
     VkQueue presentQueue;
+    VkQueue transferQueue;
 
     VkSurfaceKHR surface;
 
@@ -130,7 +131,8 @@ class HelloTriangleApplication {
     VkBuffer vertexBuffer;
     VkDeviceMemory vertexBufferMemory;
 
-    VkCommandPool commandPool;
+    VkCommandPool commandPoolGraphics;
+    VkCommandPool commandPoolTransfer;
     std::vector<VkCommandBuffer> commandBuffers;
 
     std::vector <VkSemaphore> imageAvailableSemaphores;
@@ -143,9 +145,13 @@ class HelloTriangleApplication {
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily;
         std::optional<uint32_t> presentFamily;
+        std::optional<uint32_t> transferFamily;
 
         bool isComplete() {
-            return graphicsFamily.has_value() && presentFamily.has_value();
+            return 
+                graphicsFamily.has_value() && 
+                presentFamily.has_value() &&
+                transferFamily.has_value();
         }
     };
 
@@ -182,7 +188,7 @@ class HelloTriangleApplication {
         createRenderPass();
         createGraphicsPipeline();
         createFramebuffers();
-        createCommandPool();
+        createCommandPools();
         createVertexBuffer();
         createCommandBuffers();
         createSyncObjects();
@@ -201,7 +207,8 @@ class HelloTriangleApplication {
             vkDestroyFence(device, inFlightFences[i], nullptr);
         }
 
-        vkDestroyCommandPool(device, commandPool, nullptr);
+        vkDestroyCommandPool(device, commandPoolGraphics, nullptr);
+        vkDestroyCommandPool(device, commandPoolTransfer, nullptr);
 
         vkDestroyPipeline(device, graphicsPipeline, nullptr);
         vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
@@ -553,7 +560,10 @@ class HelloTriangleApplication {
 
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
         std::set<uint32_t> uniqueQueueFamilies = {
-            indices.graphicsFamily.value(), indices.presentFamily.value()};
+            indices.graphicsFamily.value(),
+            indices.presentFamily.value(),
+            indices.transferFamily.value()
+        };
 
         float queuePriority = 1.0f;
         for (uint32_t queueFamily : uniqueQueueFamilies) {
@@ -595,10 +605,9 @@ class HelloTriangleApplication {
 
         // Get the queue
         // Since it's using just one device queue the index is 0
-        vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0,
-                         &graphicsQueue);
-        vkGetDeviceQueue(device, indices.presentFamily.value(), 0,
-                         &presentQueue);
+        vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+        vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+        vkGetDeviceQueue(device, indices.transferFamily.value(), 0, &transferQueue);
     }
 
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
@@ -617,15 +626,25 @@ class HelloTriangleApplication {
         for (const auto &queueFamily : queueFamilies) {
 
             // Does the queue support surface presentation
-            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface,
-                                                 &presentSupport);
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
             // If the queue is suitable for surface presentation
-            if (presentSupport) {
+            if ((presentSupport) && 
+                !(indices.presentFamily.has_value())
+                ) {
                 indices.presentFamily = i;
             }
 
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            if ((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) &&
+                !(indices.graphicsFamily.has_value())
+                ) {
                 indices.graphicsFamily = i;
+            }
+
+            if ((queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT) &&
+                !(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) &&
+                !(queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT)
+                ) {
+                indices.transferFamily = i;
             }
 
             if (indices.isComplete()) {
@@ -633,6 +652,20 @@ class HelloTriangleApplication {
             }
 
             i++;
+        }
+
+        // If no dedicated transfer family was found pick the next best thing 
+        // loops from back to front as trying not to pick the same queues for present and graphics
+        if (!indices.transferFamily.has_value()) {
+            for (i = queueFamilies.size() - 1; i >= 0; i--) {
+                auto queueFamily = queueFamilies.at(i);
+                
+                if ((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) ||
+                    (queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT)
+                    ) {
+                    indices.transferFamily = i;
+                }
+            }
         }
 
         return indices;
@@ -1094,16 +1127,25 @@ class HelloTriangleApplication {
     }
 
 
-    void createCommandPool() {
+    void createCommandPools() {
         QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
 
-        VkCommandPoolCreateInfo poolInfo{};
-        poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+        VkCommandPoolCreateInfo poolInfoGraphics{};
+        poolInfoGraphics.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolInfoGraphics.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        poolInfoGraphics.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 
-        if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create command pool!");
+        if (vkCreateCommandPool(device, &poolInfoGraphics, nullptr, &commandPoolGraphics) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create graphics command pool!");
+        }
+
+        VkCommandPoolCreateInfo poolInfoTransfer{};
+        poolInfoTransfer.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolInfoTransfer.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        poolInfoTransfer.queueFamilyIndex = queueFamilyIndices.transferFamily.value();
+
+        if (vkCreateCommandPool(device, &poolInfoTransfer, nullptr, &commandPoolTransfer) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create tranfer command pool!");
         }
     }
 
@@ -1113,7 +1155,7 @@ class HelloTriangleApplication {
 
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool = commandPool;
+        allocInfo.commandPool = commandPoolGraphics;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandBufferCount = commandBuffers.size();
 
@@ -1223,7 +1265,7 @@ class HelloTriangleApplication {
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = sizeof(vertices[0]) * vertices.size();
         bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        bufferInfo.sharingMode = VK_SHARING_MODE_CONCURRENT;
 
         if (vkCreateBuffer(device, &bufferInfo, nullptr, &vertexBuffer) != VK_SUCCESS) {
             throw std::runtime_error("failed to create vertex buffer!");
