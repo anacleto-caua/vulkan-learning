@@ -1,1 +1,1 @@
-https://vulkan-tutorial.com/en/Vertex_buffers/Index_buffer
+https://vulkan-tutorial.com/en/Uniform_buffers/Descriptor_set_layout_and_buffer
