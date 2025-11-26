@@ -1,1 +1,1 @@
-https://vulkan-tutorial.com/en/Uniform_buffers/Descriptor_pool_and_sets
+https://vulkan-tutorial.com/en/Texture_mapping/Images
