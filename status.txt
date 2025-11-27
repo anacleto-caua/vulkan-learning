@@ -1,1 +1,1 @@
-https://vulkan-tutorial.com/en/Texture_mapping/Images
+https://vulkan-tutorial.com/en/Texture_mapping/Image_view_and_sampler
