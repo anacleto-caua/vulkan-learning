@@ -452,7 +452,6 @@ class HelloTriangleApplication {
         return VK_FALSE;
     }
 
-
     void setupDebugMessenger() {
         if (!enableValidationLayers)
             return;
@@ -479,7 +478,6 @@ class HelloTriangleApplication {
         }
     }
 
-
     void createSurface() {
         if (glfwCreateWindowSurface(instance, window, nullptr, &surface) !=
             VK_SUCCESS) {
@@ -487,7 +485,6 @@ class HelloTriangleApplication {
         }
     }
     
-
     void pickPhysicalDevice() {
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -693,7 +690,6 @@ class HelloTriangleApplication {
 
         return score;
     }
-    
 
     void createLogicalDevice() {
         // Saves the queue indices to the global variable
@@ -927,7 +923,6 @@ class HelloTriangleApplication {
         createFramebuffers();
     }
 
-
     void createImageViews() {
         swapChainImageViews.resize(swapChainImages.size());
 
@@ -947,7 +942,6 @@ class HelloTriangleApplication {
             func(instance, debugMessenger, pAllocator);
         }
     }
-
 
     void createRenderPass() {
         VkAttachmentDescription colorAttachment{};
@@ -1011,7 +1005,6 @@ class HelloTriangleApplication {
         }
     }
 
-
     void createDescriptorSetLayout() {
         VkDescriptorSetLayoutBinding uboLayoutBinding{};
         uboLayoutBinding.binding = 0;
@@ -1037,7 +1030,6 @@ class HelloTriangleApplication {
             throw std::runtime_error("failed to create a descriptor set layout!");
         }
     }
-
 
     void createGraphicsPipeline() {
         /**
@@ -1217,7 +1209,6 @@ class HelloTriangleApplication {
         vkDestroyShaderModule(device, vertShaderModule, nullptr);
     }
 
-
     VkShaderModule createShaderModule(const std::vector<char>& code) {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -1231,7 +1222,6 @@ class HelloTriangleApplication {
 
         return shaderModule;
     }
-
 
     void createFramebuffers() {
         swapChainFramebuffers.resize(swapChainImageViews.size());
@@ -1258,7 +1248,6 @@ class HelloTriangleApplication {
         }
     }
 
-
     void createCommandPools() {
 
         VkCommandPoolCreateInfo poolInfoGraphics{};
@@ -1279,7 +1268,6 @@ class HelloTriangleApplication {
             throw std::runtime_error("failed to create transfer command pool!");
         }
     }
-
 
     void createDepthResources() {
         VkFormat depthFormat = findDepthFormat();
@@ -1705,7 +1693,6 @@ class HelloTriangleApplication {
 
     }
 
-
     void createSyncObjects() {
 
         imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -2044,7 +2031,6 @@ class HelloTriangleApplication {
         }
     }
 
-    
     void createDescriptorPool() {
         std::array<VkDescriptorPoolSize, 2> poolSizes{};
         poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -2135,7 +2121,6 @@ class HelloTriangleApplication {
         throw std::runtime_error("failed to find suitable memory type!");
     }
 
-
     void drawFrame() {
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -2221,7 +2206,6 @@ class HelloTriangleApplication {
         memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 }
 
-
     void mainLoop() {
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
@@ -2230,7 +2214,6 @@ class HelloTriangleApplication {
 
         vkDeviceWaitIdle(device);
     }
-
 };
 
 int main() {
