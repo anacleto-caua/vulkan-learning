@@ -371,8 +371,7 @@ class HelloTriangleApplication {
         return extensions;
     }
 
-    bool checkForGlfwExtensionsSupport(const char **glfwExtensions,
-                                       uint32_t glfwExtensionCount) {
+    bool checkForGlfwExtensionsSupport(const char **glfwExtensions, uint32_t glfwExtensionCount) {
         // Checking for Vulkan available extensions
         uint32_t extensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount,
@@ -441,10 +440,11 @@ class HelloTriangleApplication {
     }
 
     static VKAPI_ATTR VkBool32 VKAPI_CALL
-    debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                  VkDebugUtilsMessageTypeFlagsEXT messageType,
-                  const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-                  void *pUserData) {
+    debugCallback(
+        VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+        VkDebugUtilsMessageTypeFlagsEXT messageType,
+        const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+        void *pUserData) {
 
         std::cerr << "validation layer: " << pCallbackData->pMessage
                   << std::endl;
@@ -937,10 +937,10 @@ class HelloTriangleApplication {
         
     }
 
-    void
-    DestroyDebugUtilsMessengerEXT(VkInstance instance,
-                                  VkDebugUtilsMessengerEXT debugMessenger,
-                                  const VkAllocationCallbacks *pAllocator) {
+    void DestroyDebugUtilsMessengerEXT(
+        VkInstance instance,
+        VkDebugUtilsMessengerEXT debugMessenger,
+        const VkAllocationCallbacks *pAllocator) {
         auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
             instance, "vkDestroyDebugUtilsMessengerEXT");
         if (func != nullptr) {
@@ -1835,7 +1835,8 @@ class HelloTriangleApplication {
     }
 
     // Overload for ownership transfer
-    void transitionImageLayout(VkImage image,
+    void transitionImageLayout(
+        VkImage image,
         VkFormat format,
         VkImageLayout oldLayout,
         VkImageLayout newLayout,
